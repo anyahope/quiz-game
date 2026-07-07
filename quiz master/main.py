@@ -6,7 +6,7 @@ import pgzrun
 HEIGHT = 650
 WIDTH = 870
 
-#creating rectangles
+#creating rectangles sizes
 marquee_box = Rect(0, 0, 880, 80) #class
 question_box = Rect(0, 0, 650, 150)
 timer_box = Rect(0, 0, 150, 150)
@@ -26,7 +26,7 @@ answer_box4.move_ip(370, 450)
 skip_box.move_ip(700, 270)
 
 #creating game variables
-answer_boxes = [answer_box1, answer_box2, answer_box3, answer_box4]
+answer_boxes = [answer_box1, answer_box2, answer_box3, answer_box4] #set in a list as same instructions are applied to every answer box
 score = 0
 time_left = 10
 marquee_message = ''
@@ -55,4 +55,27 @@ def draw():
     screen.draw.textbox('Skip', skip_box, color = 'black')
     screen.draw.textbox( str(time_left), timer_box, color = 'black')
 
+def read_question_file():
+    global questions_set, question_count
+
+    #read question file
+    q_file = open("questions.txt", "r") #opens questions file not reading. 
+    ''' 
+    opening q_file means opening the file from secondary memory to main memory RAM. 
+    Each row in the file holds a different question, so instead of loading the whole file
+    it loads question by question. 
+    '''
+    for row in q_file: 
+        questions_set.append(row)
+        question_count = question_count + 1
+    q_file.close() #closes the file after use
+    print(questions_set)
+
+#fetching each question set one by one
+def read_next_question():
+    global question_index
+    question_index = question_index + 1
+     
+
+read_question_file()
 pgzrun.go()
