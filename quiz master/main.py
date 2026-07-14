@@ -55,6 +55,15 @@ def draw():
     screen.draw.textbox('Skip', skip_box, color = 'black')
     screen.draw.textbox( str(time_left), timer_box, color = 'black')
 
+    #displaying question in question box
+    screen.draw.textbox(question_row[0], question_box, color = 'black')
+
+    #displaying answer options in answer boxes
+    screen.draw.textbox(question_row[1], answer_box1, color = 'black')
+    screen.draw.textbox(question_row[2], answer_box2, color = 'black')
+    screen.draw.textbox(question_row[3], answer_box3, color = 'black')
+    screen.draw.textbox(question_row[4], answer_box4, color = 'black')
+        
 def read_question_file():
     global questions_set, question_count
 
@@ -75,7 +84,38 @@ def read_question_file():
 def read_next_question():
     global question_index
     question_index = question_index + 1
-     
+    return questions_set.pop(0).split(",")
+
+def update_timer():
+    global time_left
+    if time_left > 0:
+        time_left = time_left - 1
+    else:
+        game_over()
+
+def game_over():
+    global score, questions_set, question_row, time_left, is_game_over   
+    message = f"Game over! Your score was {score} out of {question_count}"
+    question_row = [message, "-", "-", "-", "-", 5] #message goes inside question box and the dashes fill the answer boxes
+    time_left = 0
+    is_game_over = True
+
+def on_mouse_down(pos):
+    index = 1
+    for a_box in answer_boxes:
+        if a_box.collidepoint(pos):
+            if index == question_row[5]:
+                correct_answer()
+            else:
+                game_over()
+        index = index + 1
+    if skip_box.collidepoint(pos):
+        question_row = read_next_question()
 
 read_question_file()
+question_row = read_next_question()
+clock.schedule_interval(update_timer, 1)
+
+
+
 pgzrun.go()
