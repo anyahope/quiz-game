@@ -68,11 +68,12 @@ def read_question_file():
     global questions_set, question_count
 
     #read question file
-    q_file = open("questions.txt", "r") #opens questions file not reading. 
+    q_file = open("questions.txt", "r") #opens the file r --> read file only, not modifying anything inside of it
     ''' 
     opening q_file means opening the file from secondary memory to main memory RAM. 
-    Each row in the file holds a different question, so instead of loading the whole file
-    it loads question by question. 
+    
+    Each row in the file holds a different question, so instead of loading the whole file in one shot
+    we load question by question. 
     '''
     for row in q_file: 
         questions_set.append(row)
@@ -83,8 +84,11 @@ def read_question_file():
 #fetching each question set one by one
 def read_next_question():
     global question_index
-    question_index = question_index + 1
-    return questions_set.pop(0).split(",")
+    question_index = question_index + 1 #question_index --> how many questions has been asked
+    
+    new_question_set =  questions_set.pop(0).split(",") #split --> creates a list by breaking down into independent items each time there is a commar and into a list
+    return new_question_set 
+
 
 def update_timer():
     global time_left
@@ -101,10 +105,11 @@ def game_over():
     is_game_over = True
 
 def on_mouse_down(pos):
-    index = 1
+    global question_row
+    index = 1 #when index = 1, answers can start
     for a_box in answer_boxes:
         if a_box.collidepoint(pos):
-            if index == question_row[5]:
+            if index is int( question_row[5]): #when value of index variable = value stored at 5th position of question row list, answer is correct
                 correct_answer()
             else:
                 game_over()
@@ -112,8 +117,19 @@ def on_mouse_down(pos):
     if skip_box.collidepoint(pos):
         question_row = read_next_question()
 
+def correct_answer():
+    global score, question_row, time_left, questions_set
+    score = score + 1
+    if questions_set: #checking if there are questions left in the list
+        question_row = read_next_question()
+        time_left = 10
+    else:
+        game_over()
+
+
+
 read_question_file()
-question_row = read_next_question()
+question_row = read_next_question() #variable is getting the value returned by the function back
 clock.schedule_interval(update_timer, 1)
 
 
